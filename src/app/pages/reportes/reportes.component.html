@@ -1,0 +1,141 @@
+<div class="container">
+    <h1>Reportes</h1>
+    <h3>Reportes compartidos por el administrador</h3>
+    
+    @if (!hayReportes) {
+        <p class="no-reports">No hay reportes compartidos por el administrador.</p>
+    } @else {
+        @for (reporte of reportes; track reporte._id) {
+            <div class="report-item">
+                <div class="report-header">
+                    <strong>Título:</strong> {{ reporte.titulo }}
+                    @if (reporte.compartido) {
+                        <span class="badge-compartido">(Compartido)</span>
+                    }
+                </div>
+                <div class="report-description">
+                    <strong>Descripción:</strong> {{ reporte.descripcion }}
+                </div>
+                <div class="report-footer">
+                    <strong>Fecha de compartición:</strong> {{ reporte.created_at }}
+                    <button class="btn btn-download" (click)="descargarReporte(reporte._id)">
+                        📥 Descargar
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<style>
+    .container { 
+        max-width: 900px; 
+        margin: 20px auto; 
+        padding: 20px; 
+    }
+
+    h1 {
+        color: #2e7d32;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h3 {
+        color: #495057;
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: normal;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 10px;
+    }
+
+    .report-item {
+        margin-bottom: 20px;
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .report-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+
+    .report-description {
+        margin-bottom: 15px;
+        color: #6c757d;
+        line-height: 1.5;
+    }
+
+    .report-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9em;
+        color: #6c757d;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .badge-compartido {
+        color: #28a745;
+        font-weight: bold;
+        background-color: #e8f5e8;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+    }
+
+    .btn-download {
+        background-color: #6f42c1;
+        padding: 8px 16px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-download:hover {
+        background-color: #5a2d91;
+        transform: translateY(-1px);
+    }
+
+    .no-reports {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        padding: 40px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 2px dashed #dee2e6;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+            margin: 10px auto;
+        }
+        
+        .report-footer {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .btn-download {
+            align-self: flex-end;
+        }
+    }
+</style>

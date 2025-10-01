@@ -1,0 +1,53 @@
+<div class="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+  <!-- Encabezado -->
+  <div class="bg-blue-600 text-white p-4 text-center text-lg font-bold shadow-md">
+    Chatbot FUTURED 🤖
+  </div>
+
+  <!-- Conversación -->
+  <div #chatContainer class="flex-1 overflow-y-auto p-4 space-y-4">
+    <div *ngFor="let msg of messages">
+      <div [ngClass]="msg.sender === 'user' ? 'text-right' : 'text-left'">
+        <div
+          [ngClass]="
+            msg.colorClass
+              ? msg.colorClass + ' p-3 rounded-2xl max-w-md inline-block shadow-md whitespace-pre-wrap text-left'
+              : msg.sender === 'user'
+              ? 'inline-block bg-blue-500 text-white p-3 rounded-2xl max-w-md shadow-md text-left whitespace-pre-wrap'
+              : msg.error
+              ? 'inline-block bg-red-200 text-red-800 p-3 rounded-2xl max-w-md shadow-md text-left whitespace-pre-wrap'
+              : 'inline-block bg-gray-200 text-black p-3 rounded-2xl max-w-md shadow-md text-left whitespace-pre-wrap'
+          "
+          [innerHTML]="msg.text"
+        ></div>
+        <div class="text-xs text-gray-500 mt-1">{{ msg.time }}</div>
+      </div>
+    </div>
+
+    <!-- Puntitos animados mientras el bot "escribe" -->
+    <div *ngIf="isTyping" class="text-left">
+      <div class="inline-block bg-gray-200 p-3 rounded-2xl max-w-xs shadow-md">
+        <span class="typing-dot animate-pulse">.</span>
+        <span class="typing-dot animate-pulse delay-150">.</span>
+        <span class="typing-dot animate-pulse delay-300">.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="p-4 bg-white flex items-center border-t shadow-md">
+    <input
+      [(ngModel)]="userInput"
+      (keyup.enter)="sendMessage()"
+      type="text"
+      placeholder="Escribe tu mensaje..."
+      class="flex-1 p-3 border rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <button
+      (click)="sendMessage()"
+      class="ml-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+    >
+      Enviar
+    </button>
+  </div>
+</div>

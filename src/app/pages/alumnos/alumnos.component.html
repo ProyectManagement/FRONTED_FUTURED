@@ -1,0 +1,33 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">👩‍🎓 Lista de Alumnos</h2>
+
+  <!-- Mensajes -->
+  <p *ngIf="loading" class="text-blue-500">⏳ Cargando alumnos...</p>
+  <p *ngIf="error" class="text-red-500 font-semibold">{{ error }}</p>
+
+  <!-- Tabla de alumnos -->
+  <table *ngIf="!loading && alumnos.length > 0" class="table-auto w-full border border-gray-300 border-collapse">
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="border border-gray-300 px-2 py-1">Matrícula</th>
+        <th class="border border-gray-300 px-2 py-1">Nombre</th>
+        <th class="border border-gray-300 px-2 py-1">Apellido Paterno</th>
+        <th class="border border-gray-300 px-2 py-1">Apellido Materno</th>
+        <th class="border border-gray-300 px-2 py-1">Carrera</th>
+        <th class="border border-gray-300 px-2 py-1">Grupo</th>
+        <th class="border border-gray-300 px-2 py-1">Creado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let alumno of alumnos">
+        <td class="border border-gray-300 px-2 py-1">{{ alumno.matricula }}</td>
+        <td class="border border-gray-300 px-2 py-1">{{ alumno.nombre }}</td>
+        <td class="border border-gray-300 px-2 py-1">{{ alumno.apellido_paterno }}</td>
+        <td class="border border-gray-300 px-2 py-1">{{ alumno.apellido_materno }}</td>
+        <td class="border border-gray-300 px-2 py-1">{{ alumno.id_carrera }}</td>
+        <td class="border border-gray-300 px-2 py-1">{{ alumno.id_grupo }}</td>
+        <td class="border border-gray-300 px-2 py-1">{{ alumno.created_at }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

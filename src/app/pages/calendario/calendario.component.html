@@ -1,0 +1,226 @@
+<div class="container">
+    <h1>Calendario</h1>
+    
+    <div class="calendar-controls">
+        <button class="btn" (click)="prevMonth()">‹ Mes Anterior</button>
+        <div class="month-display">
+            <h2>{{ currentMonth }} {{ currentYear }}</h2>
+        </div>
+        <button class="btn" (click)="nextMonth()">Mes Siguiente ›</button>
+    </div>
+    
+    <div class="calendar-days">
+        @for (dayName of dayNames; track dayName) {
+            <div class="calendar-day header-day">{{ dayName }}</div>
+        }
+        
+        @for (day of calendarDays; track day.date) {
+            <div class="calendar-day" 
+                 [class.event]="hasEvent(day.date) && day.isCurrentMonth"
+                 [class.other-month]="!day.isCurrentMonth"
+                 (click)="day.isCurrentMonth ? toggleDetails(day.date) : null">
+                <span [class.text-muted]="!day.isCurrentMonth">{{ day.day }}</span>
+            </div>
+        }
+    </div>
+    
+    <div class="event-details" [class.active]="showEventDetails">
+        <h4>Eventos del día:</h4>
+        <ul>
+            @if (selectedDateEvents.length === 0) {
+                <li>No hay eventos este día.</li>
+            } @else {
+                @for (event of selectedDateEvents; track event.fecha) {
+                    <li>
+                        <strong>{{ event.tema }}</strong> - Alumno: {{ event.alumno_nombre || 'Sin nombre' }}
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<style>
+    .container { 
+        max-width: 900px; 
+        margin: 20px auto; 
+        padding: 20px; 
+    }
+
+    .calendar-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .month-display {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .month-display h2 {
+        margin: 0;
+        color: #2e7d32;
+        font-size: 1.5em;
+    }
+
+    .calendar-days { 
+        display: grid; 
+        grid-template-columns: repeat(7, 1fr); 
+        gap: 1px;
+        background-color: #ddd;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .calendar-day { 
+        padding: 15px 5px; 
+        background-color: white;
+        min-height: 80px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        position: relative;
+    }
+
+    .calendar-day:not(.header-day) {
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .calendar-day:not(.header-day):hover {
+        background-color: #f0f0f0;
+    }
+
+    .header-day {
+        background-color: #2e7d32;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9em;
+        min-height: 40px;
+        align-items: center;
+    }
+
+    .calendar-day.event { 
+        background-color: #e8f5e8; 
+    }
+
+    .calendar-day.event:hover { 
+        background-color: #d4edda; 
+    }
+
+    .calendar-day.event::after {
+        content: '';
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: 8px;
+        background-color: #28a745;
+        border-radius: 50%;
+    }
+
+    .calendar-day.other-month {
+        background-color: #f8f9fa;
+    }
+
+    .calendar-day.other-month span {
+        color: #6c757d;
+        opacity: 0.5;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .btn { 
+        padding: 10px 20px; 
+        background-color: #28a745; 
+        color: white; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+        white-space: nowrap;
+    }
+
+    .btn:hover {
+        background-color: #218838;
+        transform: translateY(-1px);
+    }
+
+    .btn-current {
+        background-color: #17a2b8;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .btn-current:hover {
+        background-color: #138496;
+    }
+
+    .event-details { 
+        margin-top: 20px; 
+        padding: 20px; 
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        display: none; 
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .event-details.active { 
+        display: block; 
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        padding: 10px;
+        border-bottom: 1px solid #dee2e6;
+        background-color: white;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        border-left: 4px solid #28a745;
+    }
+
+    li:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    h4 {
+        margin-top: 0;
+        color: #2e7d32;
+        border-bottom: 2px solid #2e7d32;
+        padding-bottom: 10px;
+    }
+
+    h1 {
+        color: #2e7d32;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+</style>
