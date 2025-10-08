@@ -1,221 +1,156 @@
-import { Component, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../services/api.service';
+import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 interface Message {
   sender: 'user' | 'bot';
   text: string;
-  time: string;
-  error?: boolean;
-  colorClass?: string;
-}
-
-interface PrediccionResponse {
-  _id?: string;
-  id_alumno?: string;
-  matricula?: string;
-  nombre_completo?: string;
-  nombre_grupo?: string;
-  riesgo?: number;
-  motivo?: string;
-  recomendacion?: string;
-  timestamp?: string;
 }
 
 @Component({
   selector: 'app-chatbot',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, CommonModule], // ✅ IMPORTS AQUÍ
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './chatbot.component.html',
-  styleUrls: ['./chatbot.component.css'],
+  styleUrls: ['./chatbot.component.css']
 })
-export class ChatbotComponent implements AfterViewChecked {
-  @ViewChild('chatContainer') private chatContainer!: ElementRef;
+export class ChatbotComponent {
+  @ViewChild('userInput') userInput!: ElementRef<HTMLInputElement>;
 
   messages: Message[] = [];
-  userInput: string = '';
   isTyping: boolean = false;
+  userInputText: string = '';
+  estado: string = 'inicio';
+  API_BASE: string = 'https://ia-futured.onrender.com';
 
-  awaitingName: boolean = true;
-  menuActive: boolean = false;
-  awaitingAnotherOp: boolean = false;
-  userName: string = '';
+  constructor(private http: HttpClient) {}
 
-  constructor(private apiService: ApiService) {
-    this.startConversation();
+  agregarMensaje(texto: string, tipo: 'user' | 'bot' = 'bot') {
+    this.messages.push({ sender: tipo, text: texto });
+    setTimeout(() => {
+      const chatBox = document.getElementById('chatBox');
+      if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+    }, 50);
   }
 
-  ngAfterViewChecked() {
-    this.scrollToBottom();
+  mostrarEscribiendo(callback: () => void) {
+    this.isTyping = true;
+    setTimeout(() => {
+      this.isTyping = false;
+      callback();
+    }, 1000 + Math.random() * 800);
   }
 
-  getTime(): string {
-    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  mostrarMenu() {
+    this.mostrarEscribiendo(() => {
+      this.agregarMensaje(`
+        <strong>¿Qué deseas hacer?</strong><br>
+        1️⃣ Consultar riesgo por matrícula<br>
+        2️⃣ Ver motivos comunes de deserción<br>
+        3️⃣ Ver porcentajes actuales<br>
+        4️⃣ Salir
+      `);
+      this.estado = 'menu';
+    });
   }
 
-  scrollToBottom() {
-    try {
-      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
-    } catch {}
-  }
+  procesarEntrada(texto: string) {
+    texto = texto.trim();
+    if (!texto) return;
 
-  startConversation() {
-    this.messages = [];
-    this.awaitingName = true;
-    this.menuActive = false;
-    this.awaitingAnotherOp = false;
-    this.userName = '';
+    this.agregarMensaje(texto, 'user');
+    const entrada = texto.toLowerCase();
 
-    this.pushBotMessage(
-      '👋 Hola, soy FUTURED, plataforma para la prevención del abandono escolar.\n¿Cómo te llamas?'
-    );
+    if (this.estado === 'inicio') {
+      this.mostrarEscribiendo(() => {
+        this.agregarMensaje("¡Hola! 👋 Soy tu asistente escolar virtual. Estoy aquí para ayudarte.");
+        this.mostrarMenu();
+      });
+    } else if (this.estado === 'menu') {
+      switch (entrada) {
+        case '1':
+          this.mostrarEscribiendo(() => {
+            this.agregarMensaje('🔎 Ingresa la matrícula del alumno:');
+            this.estado = 'esperando_matricula';
+          });
+          break;
+        case '2':
+          this.mostrarEscribiendo(() => {
+            this.agregarMensaje(`
+              📌 <strong>Motivos comunes de deserción:</strong><br>
+              - Problemas económicos<br>
+              - Bajo rendimiento académico<br>
+              - Falta de motivación<br>
+              - Problemas familiares o personales<br>
+              - Salud o trabajo
+            `);
+            this.mostrarMenu();
+          });
+          break;
+        case '3':
+          this.mostrarEscribiendo(() => {
+            this.agregarMensaje(`
+              📊 <strong>Porcentajes de deserción actuales:</strong><br>
+              - Alto riesgo (>70%): 18%<br>
+              - Riesgo medio (40–69%): 32%<br>
+              - Bajo riesgo: 50%
+            `);
+            this.mostrarMenu();
+          });
+          break;
+        case '4':
+          this.mostrarEscribiendo(() => {
+            this.agregarMensaje('👋 ¡Gracias por usar el chatbot! Que tengas un excelente día.');
+            this.estado = 'confirmar_reiniciar';
+          });
+          break;
+        default:
+          this.mostrarEscribiendo(() => {
+            this.agregarMensaje('❗ Opción no válida. Intenta con 1, 2, 3 o 4.');
+          });
+      }
+    } else if (this.estado === 'esperando_matricula') {
+      this.obtenerPrediccion(texto);
+      this.estado = 'esperando_resultado';
+    } else if (this.estado === 'confirmar_repetir' || this.estado === 'confirmar_reiniciar') {
+      if (entrada === 'sí' || entrada === 'si') {
+        this.mostrarMenu();
+      } else if (entrada === 'no') {
+        this.mostrarEscribiendo(() => { this.agregarMensaje('👍 ¡De acuerdo. Hasta pronto! 😄'); });
+      } else {
+        this.mostrarEscribiendo(() => { this.agregarMensaje("Por favor responde con 'sí' o 'no'."); });
+      }
+    }
   }
 
   sendMessage() {
-    if (!this.userInput.trim()) return;
-
-    const userMsg: Message = {
-      sender: 'user',
-      text: this.userInput,
-      time: this.getTime(),
-    };
-    this.messages.push(userMsg);
-
-    const input = this.userInput.trim().toLowerCase();
-    this.userInput = '';
-
-    if (this.awaitingName) {
-      this.userName = input;
-      this.awaitingName = false;
-      this.menuActive = true;
-
-      this.pushBotMessage(`Hola ${this.userName}, ¿cómo te puedo ayudar hoy?`);
-      this.showMenu();
-      return;
-    }
-
-    // ✅ Detectar matrícula directamente (solo números)
-    if (!this.menuActive && /^[0-9]+$/.test(input)) {
-      this.getAlumnoData(input);
-      return;
-    }
-
-    if (this.awaitingAnotherOp) {
-      this.handleAnotherOp(input);
-      return;
-    }
-
-    if (this.menuActive) {
-      this.handleMenuOption(input);
-    } else {
-      this.getAlumnoData(input);
-    }
+    const texto = this.userInputText.trim();
+    if (!texto) return;
+    this.procesarEntrada(texto);
+    this.userInputText = '';
   }
 
-  pushBotMessage(text: string, callback?: () => void) {
-    this.messages.push({
-      sender: 'bot',
-      text,
-      time: this.getTime(),
-    });
-    if (callback) callback();
-  }
+  async obtenerPrediccion(matricula: string) {
+    this.mostrarEscribiendo(() => { this.agregarMensaje('⏳ Consultando predicción...'); });
 
-  showMenu() {
-    const menu = `📌 Menú principal:\n
-1️⃣ Ver porcentaje de riesgo de deserción\n
-2️⃣ Motivos más comunes de abandono\n
-3️⃣ Consejos para prevenir la deserción\n
-4️⃣ Información de un alumno por matrícula`;
-    this.pushBotMessage(menu);
-  }
+    try {
+      const data: any = await this.http.post(`${this.API_BASE}/predict/by_matricula`, { matricula }).toPromise();
 
-  handleAnotherOp(input: string) {
-    if (input === 'si') {
-      this.awaitingAnotherOp = false;
-      this.menuActive = true;
-      this.showMenu();
-    } else if (input === 'no') {
-      this.pushBotMessage(`Gracias por usar FUTURED, ${this.userName}. Hasta luego 👋`, () =>
-        this.startConversation()
-      );
-    } else {
-      this.pushBotMessage('⚠️ Por favor responde "si" o "no".');
+      let resultado = `<strong>📋 Resultado de predicción:</strong><br>`;
+      resultado += `<strong>Matrícula:</strong> ${data.matricula || 'No disponible'}<br>`;
+      resultado += `<strong>Motivo:</strong> ${data.motivo || 'No disponible'}<br>`;
+      resultado += `<strong>Nombre completo:</strong> ${data.nombre_completo || 'No disponible'}<br>`;
+      resultado += `<strong>Grupo:</strong> ${data.nombre_grupo || 'No disponible'}<br>`;
+      resultado += `<strong>Recomendación:</strong> ${data.recomendacion || 'No disponible'}<br>`;
+      resultado += `<strong>Riesgo:</strong> ${data.riesgo || 'No disponible'}`;
+
+      this.agregarMensaje(resultado);
+      this.estado = 'confirmar_repetir';
+      this.agregarMensaje("¿Quieres hacer otra consulta? (sí / no)");
+    } catch (err) {
+      this.agregarMensaje('❌ Error al comunicarse con la API.');
+      this.mostrarMenu();
     }
-  }
-
-  handleMenuOption(option: string) {
-    switch (option) {
-      case '1':
-        this.pushBotMessage('📊 El porcentaje promedio de riesgo de deserción es del 35%.', () =>
-          this.askAnotherOperation()
-        );
-        break;
-      case '2':
-        this.pushBotMessage(
-          '📌 Motivos más comunes de abandono:\n- Problemas económicos\n- Falta de motivación\n- Problemas familiares\n- Dificultades académicas',
-          () => this.askAnotherOperation()
-        );
-        break;
-      case '3':
-        this.pushBotMessage(
-          '✅ Consejos para prevenir la deserción:\n- Mantener seguimiento regular\n- Apoyo emocional y académico\n- Participar en tutorías y actividades\n- Revisar situación socioeconómica',
-          () => this.askAnotherOperation()
-        );
-        break;
-      case '4':
-        this.pushBotMessage('✏️ Por favor ingresa la matrícula del alumno:');
-        this.menuActive = false;
-        break;
-      default:
-        this.pushBotMessage('⚠️ Opción no válida. Selecciona un número del 1 al 4.');
-        break;
-    }
-  }
-
-  askAnotherOperation() {
-    this.menuActive = false;
-    this.awaitingAnotherOp = true;
-    this.pushBotMessage('¿Quieres hacer otra operación? (si/no)');
-  }
-
-  getAlumnoData(matricula: string) {
-    this.isTyping = true;
-
-    this.apiService.getPrediccion(matricula).subscribe({
-      next: (res: PrediccionResponse) => {
-        this.isTyping = false;
-
-        let respuesta = '';
-        if (res.matricula) respuesta += `📇 Matrícula: ${res.matricula}\n`;
-        if (res.nombre_completo) respuesta += `👤 Nombre: ${res.nombre_completo}\n`;
-        if (res.nombre_grupo) respuesta += `🏫 Grupo: ${res.nombre_grupo}\n`;
-        if (res.riesgo !== undefined) respuesta += `📊 Riesgo: ${res.riesgo}%\n`;
-        if (res.motivo) respuesta += `📌 Motivo: ${res.motivo}\n`;
-        if (res.recomendacion) respuesta += `✅ Recomendación: ${res.recomendacion}\n`;
-        if (res.timestamp)
-          respuesta += `⏱️ Fecha: ${new Date(res.timestamp).toLocaleString()}\n`;
-
-        if (!respuesta) respuesta = '⚠️ Matrícula no encontrada.';
-
-        this.pushBotMessage(respuesta, () => this.askAnotherOperation());
-      },
-      error: (err) => {
-        this.isTyping = false;
-
-        let errorMsg = '';
-        if (!navigator.onLine) {
-          errorMsg = '🌐 Sin conexión a internet. Revisa tu red.';
-        } else if (err.status === 0) {
-          errorMsg = '❌ No se pudo conectar al servidor. Intenta más tarde.';
-        } else {
-          errorMsg = `❌ Error al consultar la API: ${err.message || err.statusText || err}`;
-        }
-
-        this.pushBotMessage(errorMsg, () => this.askAnotherOperation());
-      },
-    });
   }
 }

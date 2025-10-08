@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { App } from '../../app';
+import { Header } from '../../core/header/header';
 
 @Component({
   selector: 'app-navbar',
@@ -10,3 +12,4 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class Navbar {
 
 }
+
