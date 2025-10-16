@@ -1,0 +1,21 @@
+<div class="tutor-dashboard">
+  <header class="header">
+    <h1>Dashboard Tutor - FutuRed</h1>
+    <div class="user-info">
+      <span>Bienvenido, {{currentUser?.nombre}} {{currentUser?.app}}</span>
+      <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <nav class="navigation">
+    <a routerLink="/tutor/alumnos" class="nav-link">Alumnos</a>
+    <a routerLink="/tutor/asesorias" class="nav-link">Asesorías</a>
+    <a routerLink="/tutor/calendario" class="nav-link">Calendario</a>
+    <a routerLink="/tutor/chatbot" class="nav-link">Chatbot</a>
+    <a routerLink="/tutor/reportes" class="nav-link">Reportes</a>
+  </nav>
+
+  <main class="main-content">
+    <router-outlet></router-outlet> <!-- ✅ Esto es esencial -->
+  </main>
+</div>

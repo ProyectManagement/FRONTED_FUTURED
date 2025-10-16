@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../services/api.service';
 import { HttpClientModule } from '@angular/common/http';
+import {ApiService} from '../../../services/api.service';
 
 interface Alumno {
   _id?: string;
@@ -25,7 +25,7 @@ export class AlumnosComponent implements OnInit {
   loading = true;
   error = '';
 
-  constructor(private apiService: ApiService) {}
+  constructor(private ApiService: ApiService) {}
 
   ngOnInit(): void {
     this.cargarAlumnos();
@@ -36,7 +36,7 @@ export class AlumnosComponent implements OnInit {
     this.error = '';
     this.alumnos = [];
 
-    this.apiService.getTodosAlumnos().subscribe({
+    this.ApiService.getTodosAlumnos().subscribe({
       next: (data: Alumno[]) => {
         this.alumnos = data;
         this.loading = false;

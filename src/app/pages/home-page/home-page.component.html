@@ -1,1 +1,41 @@
-<p class="text-6xl text-gray-900 dark:text-white">{{ message }}</p>
+<div class="login-container">
+  <div class="card">
+    <h2>Iniciar Sesión - FutuRed</h2>
+    
+    <div class="login-form">
+      <div class="form-group">
+        <label>Correo electrónico:</label>
+        <input 
+          type="email" 
+          [value]="correo"
+          (input)="updateCorreo($any($event.target).value)"
+          required
+          placeholder="tu@email.com">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña:</label>
+        <input 
+          type="password" 
+          [value]="password"
+          (input)="updatePassword($any($event.target).value)"
+          required
+          placeholder="Tu contraseña">
+      </div>
+
+      <button 
+        type="button" 
+        (click)="onLogin()" 
+        [disabled]="isLoading" 
+        class="btn btn-primary">
+        {{ isLoading ? 'Cargando...' : 'Iniciar Sesión' }}
+      </button>
+
+      @if (errorMessage) {
+        <div class="error-message">
+          {{ errorMessage }}
+        </div>
+      }
+    </div>
+  </div>
+</div>

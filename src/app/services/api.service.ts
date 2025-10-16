@@ -1,31 +1,43 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, timeout } from 'rxjs';
+import { environment } from '../../environments/environment'; // ✅ Importar environment
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  // 🌐 Laravel API (para alumnos, reportes, usuarios, etc.)
-  private laravelApiUrl = 'http://127.0.0.1:8000/api';
-  // Si ya la tienes desplegada en Render:
-  // private laravelApiUrl = 'https://futured-api.onrender.com/api';
-
-  // 🤖 API de IA (FastAPI)
+  // ✅ Usar environment para las URLs
+  private laravelApiUrl = 'https://futured.shop/api'; // Mantener local por ahora
   private iaApiUrl = 'https://ia-futured.onrender.com';
 
+  // ✅ Agregar tu backend de Render
+  private nodeApiUrl = environment.apiUrl;
+
   constructor(private http: HttpClient) {}
+
+  // ================================
+  // 🔹 MÉTODOS DEL BACKEND NODE.JS (RENDER)
+  // ================================
+
+  /** Verificar salud del backend */
+  checkBackendHealth(): Observable<any> {
+    return this.http.get(`${this.nodeApiUrl}/health`);
+  }
 
   // ================================
   // 🔹 MÉTODOS DEL BACKEND LARAVEL
   // ================================
 
   /** Obtener todos los alumnos */
-  getTodosAlumnos(): Observable<any> {
-    return this.http.get(`${this.laravelApiUrl}/alumnos-todos`);
-  }
+ getTodosAlumnos(): Observable<any> {
+  console.log('🔗 Conectando a:', `${this.laravelApiUrl}/alumnos-todos`);
+  return this.http.get(`${this.laravelApiUrl}/alumnos-todos`).pipe(
+    timeout(10000) // ✅ Timeout de 10 segundos
+  );
+}
 
-  /** Obtener predicción desde Laravel (si existe este endpoint) */
+  /** Obtener predicción desde Laravel */
   getPrediccionDesdeLaravel(matricula: string): Observable<any> {
     return this.http.get(`${this.laravelApiUrl}/prediccion/${matricula}`);
   }
