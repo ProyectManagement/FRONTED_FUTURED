@@ -2,20 +2,38 @@
   <header class="header">
     <h1>Dashboard Tutor - FutuRed</h1>
     <div class="user-info">
-      <span>Bienvenido, {{currentUser?.nombre}} {{currentUser?.app}}</span>
-      <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
+      <span class="welcome">Bienvenido, {{currentUser?.nombre}} {{currentUser?.app}}</span>
+
+      <!-- Avatar con dropdown -->
+      <div class="user-menu" (click)="toggleMenu()" [class.open]="menuOpen">
+        <ng-container *ngIf="showAvatarImage; else fallbackIcon">
+          <img class="avatar" [src]="profileImageUrl" alt="Perfil" (error)="showAvatarImage=false" />
+        </ng-container>
+        <ng-template #fallbackIcon>
+          <!-- Icono persona -->
+          <svg class="avatar" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-4.418 0-8 2.239-8 5v2h16v-2c0-2.761-3.582-5-8-5z" />
+          </svg>
+        </ng-template>
+
+        <div class="dropdown" *ngIf="menuOpen">
+          <button class="dropdown-item" (click)="goToProfile()">Ver mi perfil</button>
+          <button class="dropdown-item danger" (click)="logout()">Cerrar Sesión</button>
+        </div>
+      </div>
     </div>
   </header>
 
+  <!-- Navegación interna restaurada -->
   <nav class="navigation">
-    <a routerLink="/tutor/alumnos" class="nav-link">Alumnos</a>
-    <a routerLink="/tutor/asesorias" class="nav-link">Asesorías</a>
-    <a routerLink="/tutor/calendario" class="nav-link">Calendario</a>
-    <a routerLink="/tutor/chatbot" class="nav-link">Chatbot</a>
-    <a routerLink="/tutor/reportes" class="nav-link">Reportes</a>
+    <a routerLink="/tutor/alumnos" routerLinkActive="router-link-active" class="nav-link">Alumnos</a>
+    <a routerLink="/tutor/asesorias" routerLinkActive="router-link-active" class="nav-link">Asesorías</a>
+    <a routerLink="/tutor/calendario" routerLinkActive="router-link-active" class="nav-link">Calendario</a>
+    <a routerLink="/tutor/chatbot" routerLinkActive="router-link-active" class="nav-link">Chatbot</a>
+    <a routerLink="/tutor/reportes" routerLinkActive="router-link-active" class="nav-link">Reportes</a>
   </nav>
 
   <main class="main-content">
-    <router-outlet></router-outlet> <!-- ✅ Esto es esencial -->
+    <router-outlet></router-outlet>
   </main>
 </div>

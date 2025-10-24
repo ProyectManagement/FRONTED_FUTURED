@@ -8,6 +8,7 @@ import { ReportesComponent } from './pages/tutor/reportes/reportes.component';
 import { TutorComponent } from './pages/tutor/tutor.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
+import { PerfilComponent } from './pages/tutor/perfil/perfil.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomePageComponent },
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'calendario', component: CalendarioComponent },
       { path: 'chatbot', component: ChatbotComponent },
       { path: 'reportes', component: ReportesComponent },
+      { path: 'perfil', component: PerfilComponent },
       { path: '', redirectTo: 'alumnos', pathMatch: 'full' }
     ]
   },

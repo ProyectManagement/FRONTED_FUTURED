@@ -1,6 +1,103 @@
+/* Contenedor general del dashboard */
+.dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px;
+}
+
+/* Card translúcido (alineado con el login) */
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  backdrop-filter: blur(8px);
+  width: 100%;
+  max-width: 1100px;
+}
+
+.card-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.6rem;
+  color: #1f2937; /* gray-800 */
+}
+
+/* Barra de estado */
+.status-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.status {
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+}
+.status.loading { background: rgba(99,102,241,0.12); color: #4f46e5; }
+.status.error   { background: rgba(252,165,165,0.25); color: #dc2626; }
+.status.empty   { background: rgba(234,179,8,0.18); color: #b45309; }
+
+/* Tabla estilizada */
+.table-wrapper { overflow-x: auto; }
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.table thead th {
+  text-align: left;
+  background: #f3f4f6; /* gray-100 */
+  color: #374151; /* gray-700 */
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.table tbody td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1f2937; /* gray-800 */
+}
+.table tbody tr:hover {
+  background: #f9fafb; /* gray-50 */
+}
+
 /* Tarjetas responsivas */
 @media (max-width: 640px) {
   .grid-cols-1 {
     grid-template-columns: 1fr !important;
   }
+}
+
+/* Barra de filtros */
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem 0;
+  flex-wrap: wrap;
+}
+.filter-label {
+  font-size: 0.9rem;
+  color: #374151;
+}
+.filter-select,
+.filter-input {
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #1f2937;
+}
+.filter-input {
+  flex: 1 1 280px;
+}
+.filter-select {
+  min-width: 180px;
+}
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }

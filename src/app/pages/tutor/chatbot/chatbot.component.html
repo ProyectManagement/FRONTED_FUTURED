@@ -1,20 +1,25 @@
 <div class="container main-content">
-  <div class="chat-container">
-    <div class="chat-header">
-      <i class="fas fa-robot me-2"></i> 🎓 Chatbot Escolar
-    </div>
-    <div class="chat-box" id="chatBox">
-      <div *ngFor="let msg of messages" [ngClass]="msg.sender === 'user' ? 'message user clearfix' : 'message bot clearfix'">
-        <span [innerHTML]="msg.text"></span>
-      </div>
-      <div *ngIf="isTyping" class="typing message bot clearfix">
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
-    </div>
+  <div class="dashboard-container">
+    <div class="card chatbot-card">
+      <h2 class="card-title">🤖 Chatbot Escolar</h2>
 
-    <div class="chat-input">
-      <input #userInput type="text" placeholder="Escribe tu mensaje..." [(ngModel)]="userInputText" (keyup.enter)="sendMessage()">
-      <button (click)="sendMessage()"> <i class="fas fa-paper-plane me-2"></i>Enviar </button>
+      <div class="chat-box" id="chatBox">
+        <div *ngFor="let msg of messages" [ngClass]="msg.sender === 'user' ? 'bubble user' : 'bubble bot'">
+          <span [innerHTML]="msg.text"></span>
+        </div>
+
+        <div *ngIf="isTyping" class="bubble bot typing">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <input #userInput type="text" placeholder="Escribe tu mensaje..."
+               [(ngModel)]="userInputText" (keyup.enter)="sendMessage()" />
+        <button (click)="sendMessage()">Enviar</button>
+      </div>
     </div>
   </div>
 </div>

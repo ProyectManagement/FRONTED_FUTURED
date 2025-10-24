@@ -1,33 +1,58 @@
-<div class="p-4">
-  <h2 class="text-2xl font-bold mb-4">👩‍🎓 Lista de Alumnos</h2>
+<div class="dashboard-container">
+  <div class="card">
+    <h2 class="card-title">👩‍🎓 Lista de Alumnos</h2>
 
-  <!-- Mensajes -->
-  <p *ngIf="loading" class="text-blue-500">⏳ Cargando alumnos...</p>
-  <p *ngIf="error" class="text-red-500 font-semibold">{{ error }}</p>
+    <!-- Mensajes -->
+    <div class="status-bar">
+      <span *ngIf="loading" class="status loading">⏳ Cargando alumnos...</span>
+      <span *ngIf="error" class="status error">{{ error }}</span>
+      <span *ngIf="!loading && alumnos.length === 0 && !error" class="status empty">⚠️ No hay alumnos disponibles.</span>
+    </div>
 
-  <!-- Tabla de alumnos -->
-  <table *ngIf="!loading && alumnos.length > 0" class="table-auto w-full border border-gray-300 border-collapse">
-    <thead class="bg-gray-200">
-      <tr>
-        <th class="border border-gray-300 px-2 py-1">Matrícula</th>
-        <th class="border border-gray-300 px-2 py-1">Nombre</th>
-        <th class="border border-gray-300 px-2 py-1">Apellido Paterno</th>
-        <th class="border border-gray-300 px-2 py-1">Apellido Materno</th>
-        <th class="border border-gray-300 px-2 py-1">Carrera</th>
-        <th class="border border-gray-300 px-2 py-1">Grupo</th>
-        <th class="border border-gray-300 px-2 py-1">Creado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let alumno of alumnos">
-        <td class="border border-gray-300 px-2 py-1">{{ alumno.matricula }}</td>
-        <td class="border border-gray-300 px-2 py-1">{{ alumno.nombre }}</td>
-        <td class="border border-gray-300 px-2 py-1">{{ alumno.apellido_paterno }}</td>
-        <td class="border border-gray-300 px-2 py-1">{{ alumno.apellido_materno }}</td>
-        <td class="border border-gray-300 px-2 py-1">{{ alumno.id_carrera }}</td>
-        <td class="border border-gray-300 px-2 py-1">{{ alumno.id_grupo }}</td>
-        <td class="border border-gray-300 px-2 py-1">{{ alumno.created_at }}</td>
-      </tr>
-    </tbody>
-  </table>
+    <!-- Barra de filtros -->
+    <div class="filters" *ngIf="!loading && alumnos.length > 0">
+      <label class="filter-label" for="grupoSelect">Grupo</label>
+      <select id="grupoSelect" class="filter-select" [(ngModel)]="selectedGroup" (change)="applyFilters()">
+        <option value="">Todos los grupos</option>
+        <option *ngFor="let g of grupos" [value]="g">{{ g }}</option>
+      </select>
+
+      <input
+        class="filter-input"
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="applyFilters()"
+        placeholder="Buscar por matrícula, nombre, apellidos, carrera, grupo..."
+      />
+    </div>
+
+    <!-- Tabla de alumnos -->
+    <div class="table-wrapper" *ngIf="!loading && alumnos.length > 0">
+      <div *ngIf="filteredAlumnos.length === 0" class="status empty">🔎 No hay resultados para los filtros o búsqueda.</div>
+      <table class="table" *ngIf="filteredAlumnos.length > 0">
+        <thead>
+          <tr>
+            <th>Matrícula</th>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Carrera</th>
+            <th>Grupo</th>
+            <th>Creado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let alumno of filteredAlumnos">
+            <td>{{ alumno.matricula }}</td>
+            <td>{{ alumno.nombre }}</td>
+            <td>{{ alumno.apellido_paterno }}</td>
+            <td>{{ alumno.apellido_materno }}</td>
+            <td>{{ alumno.id_carrera }}</td>
+            <td>{{ alumno.id_grupo }}</td>
+            <td>{{ alumno.created_at }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

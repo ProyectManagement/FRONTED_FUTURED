@@ -1,5 +1,5 @@
-<app-navbar/>
+<app-navbar *ngIf="showNavbar()" />
 <!-- Routing --> 
-<div class="p-10  min-h-screen rounded dark:bg-gray-900 bg-gray-200">
+<div [class]="showNavbar() ? 'p-10 min-h-screen rounded dark:bg-gray-900 bg-gray-200' : 'min-h-screen'">
   <router-outlet />
 </div>

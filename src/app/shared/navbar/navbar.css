@@ -1,0 +1,50 @@
+.site-navbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.site-navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 16px;
+}
+
+.site-navbar .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.site-navbar ul.nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-navbar ul.nav a {
+  color: #374151;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.site-navbar ul.nav a:hover {
+  color: #111827;
+  background: #f3f4f6;
+}
+
+/* Activo por routerLinkActive */
+.router-link-active,
+.site-navbar ul.nav li[routerLinkActive] a.router-link-active {
+  color: #4f46e5;
+  background: rgba(79,70,229,0.10);
+}

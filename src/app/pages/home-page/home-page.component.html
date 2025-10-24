@@ -1,6 +1,12 @@
-<div class="login-container">
+<div class="login-container" [style.background-image]="backgroundImage()">
   <div class="card">
+    @if (logoUrl) {
+      <div class="logo-wrapper">
+        <img [src]="assetUrl(logoUrl)" alt="Logo" class="logo" />
+      </div>
+    }
     <h2>Iniciar Sesión - FutuRed</h2>
+    <h3 class="subtitle">Ingresa tus credenciales para continuar</h3>
     
     <div class="login-form">
       <div class="form-group">

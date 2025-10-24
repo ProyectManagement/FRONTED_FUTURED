@@ -1,0 +1,13 @@
+.perfil-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+.perfil-card h2 {
+  margin-top: 0;
+  color: #1f2937;
+}
