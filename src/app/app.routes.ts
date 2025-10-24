@@ -12,6 +12,7 @@ import { PerfilComponent } from './pages/tutor/perfil/perfil.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomePageComponent },
+  { path: 'bienvenida', loadComponent: () => import('./pages/welcome/welcome.component').then(m => m.WelcomeComponent) },
   
   // Ruta protegida para tutor
   { 
@@ -31,6 +32,6 @@ export const routes: Routes = [
   },
 
   // Redirecciones
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: '**', redirectTo: 'home' }
+  { path: '', redirectTo: 'bienvenida', pathMatch: 'full' },
+  { path: '**', redirectTo: 'bienvenida' }
 ];

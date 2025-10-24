@@ -15,14 +15,14 @@ export class App {
   showNavbar = signal(true);
 
   constructor(private router: Router) {
-    // Ocultar navbar en '/home' y bajo '/tutor'
-    this.showNavbar.set(!(this.router.url.startsWith('/home') || this.router.url.startsWith('/tutor')));
+    // Ocultar navbar en '/bienvenida', '/home' y bajo '/tutor'
+    this.showNavbar.set(!(this.router.url.startsWith('/bienvenida') || this.router.url.startsWith('/home') || this.router.url.startsWith('/tutor')));
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects || event.url;
-        // Ocultar navbar en '/home' y bajo '/tutor'
-        this.showNavbar.set(!(url.startsWith('/home') || url.startsWith('/tutor')));
+        // Ocultar navbar en '/bienvenida', '/home' y bajo '/tutor'
+        this.showNavbar.set(!(url.startsWith('/bienvenida') || url.startsWith('/home') || url.startsWith('/tutor')));
       }
     });
   }
